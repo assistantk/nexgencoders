@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Satellite Image Analysis System</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- html2canvas for capturing map -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+</head>
+<body class="dark-theme">
+    <div class="container">
+        <header>
+            <div class="header-main">
+                <h1>🛰️ Elite Satellite Intelligence System</h1>
+                <p>Direct Satellite Search • AI Analysis • Real-Time Terrain Insights</p>
+            </div>
+            <div class="header-actions">
+                <span class="user-badge"><i data-lucide="user"></i> <span id="user-name">User #4092</span></span>
+                <button id="logout-btn" class="primary-btn mini outline"><i data-lucide="log-out"></i> Logout</button>
+            </div>
+        </header>
+
+        <main>
+            <!-- Map Search Section -->
+            <section class="map-section card full-width">
+                <div class="map-header">
+                    <h3><i data-lucide="map-pin"></i> Direct Satellite Search (Live)</h3>
+                    <div class="search-bar">
+                        <input type="text" id="map-search-input" placeholder="Search any location (e.g. New York, Amazon Forest)...">
+                        <button id="map-search-btn" class="primary-btn mini"><i data-lucide="search"></i></button>
+                    </div>
+                </div>
+                <div id="satellite-map" class="satellite-map">
+                    <div class="map-telemetry">
+                        <div class="telemetry-item"><i data-lucide="crosshair"></i> <span id="tel-lat">0.000</span>, <span id="tel-lon">0.000</span></div>
+                        <div class="telemetry-item"><i data-lucide="arrow-up"></i> ALT: <span id="tel-alt">2500</span>m</div>
+                        <div class="telemetry-item"><i data-lucide="calendar"></i> <span id="tel-date">2026-04-04</span></div>
+                        <div class="telemetry-item live-indicator"><span class="dot"></span> LIVE DATA FEED</div>
+                    </div>
+                </div>
+                <div class="map-controls">
+                    <button id="capture-image-btn" class="primary-btn glow-on-hover">
+                        <i data-lucide="camera"></i> Analyze Current View
+                    </button>
+                    <button id="live-monitor-btn" class="primary-btn outline">
+                        <i data-lucide="radio"></i> Start Live Monitor
+                    </button>
+                    <div id="loader" class="loader hidden"></div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section id="results-section" class="results-section hidden">
+                <div class="dashboard-grid">
+                    <!-- Before/After Slider -->
+                    <div class="card slider-card full-width" id="slider-card">
+                        <h3><i data-lucide="split"></i> Interactive Comparison</h3>
+                        <div class="comparison-slider">
+                            <img id="slider-before" src="" alt="Before">
+                            <div class="resize">
+                                <img id="slider-after" src="" alt="After">
+                            </div>
+                            <span class="handle"></span>
+                        </div>
+                    </div>
+
+                    <!-- Classification Results -->
+                    <div class="card classification-card">
+                        <h3><i data-lucide="map"></i> Land Use Classification Map</h3>
+                        <div class="image-comparison">
+                            <div class="result-img-box">
+                                <p id="class-label-1" class="badge">Image 1: -</p>
+                                <img id="res-img-1" src="" alt="Classification 1">
+                            </div>
+                            <div class="result-img-box" id="res-img-box-2">
+                                <p id="class-label-2" class="badge">Image 2: -</p>
+                                <img id="res-img-2" src="" alt="Classification 2">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Change Detection -->
+                    <div class="card change-card" id="change-card">
+                        <h3><i data-lucide="layers"></i> Change Detection (Red = Change)</h3>
+                        <div class="change-content">
+                            <img id="change-mask" src="" alt="Change Mask">
+                            <div class="change-stats">
+                                <span class="stat-label">Detected Change:</span>
+                                <span class="stat-value" id="percent-change">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data Visualization -->
+                    <div class="card viz-card">
+                        <h3><i data-lucide="pie-chart"></i> Land Distribution (%)</h3>
+                        <div class="viz-content">
+                            <div class="chart-container">
+                                <canvas id="distribution-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Insights -->
+                    <div class="card insights-card">
+                        <h3><i data-lucide="brain"></i> AI Generated Insights</h3>
+                        <div id="insights-list" class="insights-list">
+                            <!-- Insights will be added here -->
+                        </div>
+                    </div>
+
+                    <!-- AI Prediction & Forecast -->
+                    <div class="card prediction-card full-width">
+                        <h3><i data-lucide="trending-up"></i> Future Land Usage Forecast (AI)</h3>
+                        <div class="prediction-content">
+                            <div class="prediction-stats">
+                                <div class="p-stat">
+                                    <span class="p-label">Growth Prediction:</span>
+                                    <span id="growth-pred" class="p-value">Urban +15%</span>
+                                </div>
+                                <div class="p-stat">
+                                    <span class="p-label">Risk Level:</span>
+                                    <span id="risk-level" class="p-value low">Low</span>
+                                </div>
+                            </div>
+                            <div class="prediction-chart-container">
+                                <canvas id="prediction-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Chat Assistant -->
+                    <div class="card chat-card full-width">
+                        <h3><i data-lucide="message-square"></i> Satellite AI Chat Assistant</h3>
+                        <div class="chat-container">
+                            <div id="chat-box" class="chat-box">
+                                <div class="ai-msg">Hello! Ask me about the land trends in this area.</div>
+                            </div>
+                            <div class="chat-input-area">
+                                <input type="text" id="chat-input" placeholder="Ask a question about the terrain...">
+                                <button id="chat-send" class="primary-btn mini">Send</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Heatmap -->
+                    <div class="card heatmap-card full-width">
+                        <h3><i data-lucide="thermometer"></i> Terrain Density Heatmap</h3>
+                        <div id="heatmap-container" class="heatmap-container">
+                            <canvas id="heatmap-canvas"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Timeline Section -->
+            <section id="timeline-section" class="results-section hidden">
+                <div class="card timeline-card full-width">
+                    <h3><i data-lucide="clock"></i> Time-Lapse Analysis (Timeline)</h3>
+                    <div class="timeline-slider-container">
+                        <input type="range" id="timeline-range" min="0" max="0" value="0" step="1">
+                        <div class="timeline-labels" id="timeline-labels">
+                            <!-- Date labels -->
+                        </div>
+                    </div>
+                    <div class="timeline-display">
+                        <img id="timeline-img" src="" alt="Timeline Frame">
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

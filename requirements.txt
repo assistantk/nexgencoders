@@ -1,0 +1,20 @@
+fastapi
+uvicorn
+python-multipart
+numpy
+opencv-python
+torch
+torchvision
+matplotlib
+pillow
+scikit-learn
+pandas
+nexGencoders/
+├── backend/
+│   ├── main.py        # API with class-map & change-highlight support
+│   └── utils.py       # Enhanced CV logic for segmentation & diff maps
+├── frontend/
+│   ├── index.html     # Added Slider, Loader, and Pie Chart sections
+│   ├── style.css      # New Glow theme & Slider animations
+│   └── script.js      # Added Drag&Drop, Slider logic, and Chart.js updates
+└── ai_model/          # Model architecture and weights
