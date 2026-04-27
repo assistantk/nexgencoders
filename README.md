@@ -2,6 +2,8 @@
 
 A complete full-stack application for analyzing satellite imagery using AI. This system performs land use classification, change detection between two time periods, and provides environmental insights like NDVI.
 
+A complete full-stack application for analyzing satellite imagery using AI. This system performs land use classification, change detection between two time periods, and provides environmental insights like NDVI.
+
 ## 🚀 Features
 - **Land Use Classification:** Detects Water, Forest, Urban, and Agriculture.
 - **Change Detection:** Compare two images and highlight changes with percentage calculation.
